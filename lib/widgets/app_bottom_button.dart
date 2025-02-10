@@ -4,12 +4,15 @@ import '../colors/colors.dart';
 
 // ignore: must_be_immutable
 class BottomButton extends StatelessWidget {
+  bool isloading;
   String title;
+
   VoidCallback onPress;
   BottomButton({
     super.key,
     required this.title,
     required this.onPress,
+    this.isloading = false,
   });
 
   @override
@@ -30,15 +33,20 @@ class BottomButton extends StatelessWidget {
                 fixedSize:
                     Size.fromWidth(MediaQuery.of(context).size.width * 0.8)),
             onPressed: onPress,
-            child: Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                letterSpacing: 4,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            child: isloading
+                ? CircularProgressIndicator(
+                    strokeWidth: 4,
+                    color: Colors.white,
+                  )
+                : Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      letterSpacing: 4,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
           ),
         ),
       ),

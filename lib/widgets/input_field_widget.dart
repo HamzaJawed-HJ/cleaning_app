@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class UserInputField extends StatelessWidget {
-  String title;
+  String title, validation_text;
   IconData icon;
   TextEditingController controller;
   TextInputType inputType;
@@ -14,6 +14,7 @@ class UserInputField extends StatelessWidget {
     required this.icon,
     required this.controller,
     required this.inputType,
+    required this.validation_text,
   });
 
   @override
@@ -40,6 +41,12 @@ class UserInputField extends StatelessWidget {
           ),
         ),
         keyboardType: inputType,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return validation_text;
+          }
+          return null;
+        },
       ),
     );
   }

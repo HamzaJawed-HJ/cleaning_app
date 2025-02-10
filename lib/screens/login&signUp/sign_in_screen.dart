@@ -2,6 +2,7 @@ import 'package:cleaning_service/screens/login&signUp/sign_up_screen.dart';
 import 'package:cleaning_service/screens/splash%20screen/welcome_screen.dart';
 import 'package:cleaning_service/widgets/app_bottom_button.dart';
 import 'package:cleaning_service/widgets/input_field_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../colors/colors.dart';
@@ -14,9 +15,13 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  bool loading = false;
+  final formKey = GlobalKey<FormState>();
   TextEditingController emailcontroller = TextEditingController();
   TextEditingController passcontroller = TextEditingController();
   bool value = false;
+
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +31,28 @@ class _SignInScreenState extends State<SignInScreen> {
           Image(
             image: AssetImage('assets/login logo.PNG'),
           ),
-          UserInputField(
-              title: "Email",
-              icon: Icons.email_outlined,
-              controller: emailcontroller,
-              inputType: TextInputType.emailAddress),
-          UserInputField(
-              title: "Password",
-              icon: Icons.lock,
-              controller: passcontroller,
-              inputType: TextInputType.visiblePassword),
+
+          Form(
+            key: formKey,
+            child: Column(
+              children: [
+                UserInputField(
+                  title: "Email",
+                  icon: Icons.email_outlined,
+                  controller: emailcontroller,
+                  inputType: TextInputType.emailAddress,
+                  validation_text: "Enter Email",
+                ),
+                UserInputField(
+                  title: "Password",
+                  icon: Icons.lock,
+                  controller: passcontroller,
+                  inputType: TextInputType.visiblePassword,
+                  validation_text: "Enter Password",
+                ),
+              ],
+            ),
+          ),
           SizedBox(
             height: 10,
           ),
@@ -70,11 +87,34 @@ class _SignInScreenState extends State<SignInScreen> {
           // Spacer(),
           BottomButton(
               title: "Sign In",
+              isloading: loading,
               onPress: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const WelcomeScreen()));
+                setState(() {
+                  loading = true;
+                });
+
+                if (formKey.currentState!.validate()) {
+                  auth
+                      .createUserWithEmailAndPassword(
+                          email: emailcontroller.text.toString(),
+                          password: passcontroller.text.toString())
+                      .then((value) {
+                    setState(() {
+                      loading = false;
+                    });
+                  }).onError((error, stackError) {
+                    setState(() {
+                      loading = false;
+                    });
+                  });
+
+                  ;
+                } else {}
+
+                // Navigator.pushReplacement(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => const WelcomeScreen()));
               }),
           Center(
             child: Text(
